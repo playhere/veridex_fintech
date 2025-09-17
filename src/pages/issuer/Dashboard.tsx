@@ -1,6 +1,8 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, Layers, Users, BarChart3, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Card, MetricCard } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 
 const IssuerDashboard: React.FC = () => {
   const kpiData = [
@@ -77,57 +79,41 @@ const IssuerDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen">
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tracking-tight">
             资产管理概览
           </h1>
-          <p className="text-gray-400 mt-2">管理您的资产池组合和发行状态</p>
+          <p className="text-gray-400 mt-3 text-lg">管理您的资产池组合和发行状态</p>
         </div>
         
         <div className="flex gap-3">
-          <Link
-            to="/issuer/pools/new"
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg font-medium hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 flex items-center gap-2"
-          >
-            <Plus className="h-5 w-5" />
-            新建资产池
-          </Link>
-          <button className="px-6 py-3 border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+          <Button>
+            <Link to="/issuer/pools/new" className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              新建资产池
+            </Link>
+          </Button>
+          <Button variant="outline">
             导出报告
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => {
-          const Icon = kpi.icon;
           return (
-            <div
+            <MetricCard
               key={index}
-              className="p-6 bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Icon className="h-5 w-5 text-white" />
-                </div>
-                <div className={`flex items-center text-sm ${
-                  kpi.trend === 'up' ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {kpi.trend === 'up' ? (
-                    <TrendingUp className="h-4 w-4 mr-1" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 mr-1" />
-                  )}
-                  {kpi.change}
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-1">{kpi.value}</h3>
-              <p className="text-gray-400 text-sm">{kpi.title}</p>
-            </div>
+              title={kpi.title}
+              value={kpi.value}
+              change={kpi.change}
+              trend={kpi.trend}
+              icon={<kpi.icon className="h-6 w-6 text-white" />}
+            />
           );
         })}
       </div>
@@ -136,12 +122,12 @@ const IssuerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Pools */}
         <div className="lg:col-span-2">
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
+          <Card className="p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">最新资产池</h2>
+              <h2 className="text-2xl font-bold text-white">最新资产池</h2>
               <Link
                 to="/issuer/pools"
-                className="text-cyan-400 hover:text-cyan-300 text-sm font-medium"
+                className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
               >
                 查看全部 →
               </Link>
@@ -149,14 +135,15 @@ const IssuerDashboard: React.FC = () => {
             
             <div className="space-y-4">
               {recentPools.map((pool) => (
-                <div
+                <Card
                   key={pool.id}
-                  className="p-4 bg-gray-700/20 rounded-lg border border-gray-600/30 hover:border-cyan-500/30 transition-all duration-300"
+                  hover
+                  className="p-5"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-medium text-white">{pool.name}</h3>
-                      <p className="text-gray-400 text-sm">规模: {pool.size}</p>
+                      <h3 className="font-semibold text-white text-lg">{pool.name}</h3>
+                      <p className="text-gray-400">规模: {pool.size}</p>
                     </div>
                     <span className={`px-2 py-1 rounded text-xs ${
                       pool.status === '已上链' 
@@ -172,53 +159,53 @@ const IssuerDashboard: React.FC = () => {
                     <span className="text-gray-400">违约率: <span className="text-white">{pool.defaultRate}</span></span>
                     <span className="text-gray-400">预期收益: <span className="text-green-400">{pool.yield}</span></span>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Alerts & Actions */}
         <div className="space-y-6">
           {/* Alerts */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
-            <h2 className="text-xl font-semibold text-white mb-4">系统告警</h2>
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold text-white mb-6">系统告警</h2>
             <div className="space-y-3">
               {alerts.map((alert, index) => (
-                <div
+                <Card
                   key={index}
-                  className={`p-3 rounded-lg border text-sm ${
+                  className={`p-4 text-sm ${
                     alert.type === 'warning'
-                      ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+                      ? 'bg-yellow-500/10 border border-yellow-500/30 text-yellow-400'
                       : alert.type === 'success'
-                      ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                      : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                      ? 'bg-green-500/10 border border-green-500/30 text-green-400'
+                      : 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
                   }`}
                 >
                   {alert.message}
-                </div>
+                </Card>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Quick Actions */}
-          <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
-            <h2 className="text-xl font-semibold text-white mb-4">快捷操作</h2>
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold text-white mb-6">快捷操作</h2>
             <div className="space-y-3">
-              <button className="w-full p-3 text-left bg-gray-700/20 hover:bg-gray-700/40 rounded-lg border border-gray-600/30 hover:border-cyan-500/30 transition-all duration-300">
-                <div className="font-medium text-white">运行蒙特卡洛模拟</div>
+              <Card hover className="w-full p-4 text-left">
+                <div className="font-semibold text-white">运行蒙特卡洛模拟</div>
                 <div className="text-gray-400 text-sm">风险压力测试</div>
-              </button>
-              <button className="w-full p-3 text-left bg-gray-700/20 hover:bg-gray-700/40 rounded-lg border border-gray-600/30 hover:border-cyan-500/30 transition-all duration-300">
-                <div className="font-medium text-white">生成合规报告</div>
+              </Card>
+              <Card hover className="w-full p-4 text-left">
+                <div className="font-semibold text-white">生成合规报告</div>
                 <div className="text-gray-400 text-sm">监管报送</div>
-              </button>
-              <button className="w-full p-3 text-left bg-gray-700/20 hover:bg-gray-700/40 rounded-lg border border-gray-600/30 hover:border-cyan-500/30 transition-all duration-300">
-                <div className="font-medium text-white">更新白名单</div>
+              </Card>
+              <Card hover className="w-full p-4 text-left">
+                <div className="font-semibold text-white">更新白名单</div>
                 <div className="text-gray-400 text-sm">合规管理</div>
-              </button>
+              </Card>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
